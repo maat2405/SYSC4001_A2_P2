@@ -11,11 +11,18 @@ int main()
         return 1;
     }
     else if (pid == 0) {
-        execlp("/bin/ls","ls",NULL);
+        int counter = 0;
+        while (true) {
+            printf("Child counter = %d\n", counter++);
+            sleep(1);
+        }
     }
     else {
-        wait(NULL);
-        printf("Child Complete");
+        int counter = 0;
+        while (true) {
+            printf("Parent counter = %d\n", counter++);
+            sleep(1);
+        }
     }
 return 0;
 }
