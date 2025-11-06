@@ -12,14 +12,14 @@ int main()
     }
     else if (pid == 0) {
         int counter = 0;
-        while (true) {
+        while (1) {
             printf("Child counter = %d\n", counter++);
             sleep(1);
         }
     }
     else {
         int counter = 0;
-        while (true) {
+        while (1) {
             printf("Parent counter = %d\n", counter++);
             sleep(1);
         }
