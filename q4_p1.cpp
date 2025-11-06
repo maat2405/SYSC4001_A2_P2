@@ -8,28 +8,41 @@
 #include <unistd.h>
 
 int main(void) {
-    int shmid = shmget(IPC_PRIVATE, sizeof(int) * 2, IPC_CREAT | 0600);
-    if (shmid < 0) { perror("shmget"); return 1; }
+    int shmid;
+    int *shared;  
+    pid_t childpid;
+
+    shmid = shmget(IPC_PRIVATE, sizeof(int) * 2, IPC_CREAT | 0600);
+    if (shmid < 0) {
+        perror("shmget error");
+        exit(1);
+    }
 
 
-    int *shared = (int*)shmat(shmid, NULL, 0);
-    if (shared == (void*)-1) { perror("shmat"); return 1; }
+    shared = (int*)shmat(shmid, NULL, 0);
+    if (shared == (void*)-1) {
+        perror("shmat error");
+        exit(1);
+    }
+
     shared[0] = 3;  
-    shared[1] = 0;   
+    shared[1] = 0;  
 
+    setvbuf(stdout, NULL, _IONBF, 0); 
 
-    pid_t pid = fork();
-    if (pid < 0) {
-        perror("fork");
+    childpid = fork();
+    if (childpid < 0) {
+        perror("fork failed");
         shmdt(shared);
         shmctl(shmid, IPC_RMID, NULL);
-        return 1;
+        exit(1);
     }
-    if (pid == 0) {
+
+    if (childpid == 0) {
         char buf[32];
         snprintf(buf, sizeof buf, "%d", shmid);
         execl("./q4_p2", "q4_p2", buf, (char*)NULL);
-        perror("execl");
+        perror("execl failed");
         _exit(127);
     }
 
@@ -48,12 +61,11 @@ int main(void) {
         sleep(1);
     }
 
-    int status = 0;
-    if (waitpid(pid, &status, 0) == -1) perror("waitpid");
+    int status;
+    waitpid(childpid, &status, 0);
+    shmdt(shared);
+    shmctl(shmid, IPC_RMID, NULL);
 
-    if (shmdt(shared) == -1) perror("shmdt");
-    if (shmctl(shmid, IPC_RMID, NULL) == -1) perror("shmctl IPC_RMID");
-
-    printf("P1: done (P2 status=%d).\n", status);
+    printf("P1: done (P2 exited with status=%d)\n", status);
     return 0;
 }
