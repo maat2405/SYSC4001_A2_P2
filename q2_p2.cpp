@@ -3,15 +3,13 @@
 
 int main() {
     int counter = 0;
-    int cycle = 0;
 
     while (1) {
         counter--;
         if (counter % 3 == 0)
-            printf("Cycle number: %d - %d is a multiple of 3\n", cycle, counter);
+            printf("Cycle number: %d - %d is a multiple of 3\n", counter, counter);
         else
-            printf("Cycle number: %d\n", cycle);
-        cycle++;
+            printf("Cycle number: %d\n", counter);
         sleep(1);
     }
 
