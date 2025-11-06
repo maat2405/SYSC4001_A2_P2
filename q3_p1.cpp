@@ -11,12 +11,12 @@ int main() {
         return 1;
     }
     else if (pid == 0) {
-        execl("./q2_p2", "q2_p2", NULL);
+        execl("./q3_p2", "q3_p2", NULL);
         printf("Error: exec failed\n");
         return 1;
     }
     else { 
-        wait(pid);
+        wait(&pid);
         printf("Process 2 Completed... Exiting Process 1");
 }
     }

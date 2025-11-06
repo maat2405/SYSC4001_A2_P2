@@ -13,7 +13,6 @@ int main() {
             printf("Cycle number: %d\n", counter);
         sleep(1);
     }
-    exit();
 
     return 0;
 }
