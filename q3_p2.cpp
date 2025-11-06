@@ -1,3 +1,5 @@
+//Sonai Haghgooie 101306866
+//Maathusan Sathiendran 101302780
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <stdio.h>

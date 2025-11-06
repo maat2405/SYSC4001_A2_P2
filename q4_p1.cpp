@@ -1,3 +1,5 @@
+//Sonai Haghgooie 101306866
+//Maathusan Sathiendran 101302780
 #define _XOPEN_SOURCE 700
 #include <sys/types.h>
 #include <sys/ipc.h>

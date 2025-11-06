@@ -1,3 +1,5 @@
+//Sonai Haghgooie 101306866
+//Maathusan Sathiendran 101302780
 #include <stdio.h>
 #include <unistd.h>
 
