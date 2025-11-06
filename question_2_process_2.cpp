@@ -8,9 +8,9 @@ int main() {
     while (1) {
         counter--;
         if (counter % 3 == 0)
-            printf("Cycle %d: %d is a multiple of 3\n", cycle, counter);
+            printf("Cycle number: %d - %d is a multiple of 3\n", cycle, counter);
         else
-            printf("Cycle %d\n", cycle);
+            printf("Cycle number: %d\n", cycle);
         cycle++;
         sleep(1);
     }
