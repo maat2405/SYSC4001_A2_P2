@@ -17,14 +17,15 @@ static int sem_signal_op(int semid){
 int main(int argc, char **argv) {
     if (argc != 3) { fprintf(stderr, "Usage: %s <shmid> <semid>\n", argv[0]); return 1; }
 
-    int shmid = atoi(argv[1]);
-    int semid = atoi(argv[2]);
+    int shmid = atoi(argv[1]); //shared memory ID
+    int semid = atoi(argv[2]); //semaphore ID
 
-    int *shared = (int*)shmat(shmid, NULL, 0);
+    int *shared = (int*)shmat(shmid, NULL, 0); //attaches
     if (shared == (void*)-1) { perror("shmat error"); return 1; }
 
     setvbuf(stdout, NULL, _IONBF, 0);
 
+    //waits until counter > 100, reads are protected
     while (1) {
         int v;
         if (sem_wait_op(semid) == -1) { perror("sem_wait_op"); break; }
@@ -34,6 +35,7 @@ int main(int argc, char **argv) {
         sleep(1);
     }
 
+    // print changes until counter > 500, all reads protected
     int last_seen = -1;
     while (1) {
         int cur, m, done;
@@ -50,9 +52,9 @@ int main(int argc, char **argv) {
         if (sem_signal_op(semid) == -1) { perror("sem_signal_op"); break; }
 
         if (done) break;
-        sleep(1);
+        sleep(1); //output slows by one seconf
     }
 
-    if (shmdt(shared) == -1) perror("shmdt");
+    if (shmdt(shared) == -1) perror("shmdt"); //detach
     return 0;
 }

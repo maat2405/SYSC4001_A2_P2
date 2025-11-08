@@ -5,15 +5,15 @@
 #include <stdio.h>
 #include <unistd.h>
 int main() {
-    int counter = 0;
+    int counter = 0; //set counter 0
 
-    while (counter > -500) {
+    while (counter > -500) { //stops when <= -500
         counter--;
         if (counter % 3 == 0)
             printf("Cycle number: %d - %d is a multiple of 3\n", counter, counter);
         else
             printf("Cycle number: %d\n", counter);
-        sleep(1);
+        sleep(1); //sleep slows down the output by one second
     }
 
     return 0;

@@ -23,15 +23,18 @@ static int sem_signal_op(int semid) {
 
 int main(void) {
     int shmid, semid;
-    int *shared;           
+    int *shared;      // shared[0]=multiple, shared[1]=counter      
     pid_t childpid;
 
+    // Make shared memory, 2 ints
     shmid = shmget(IPC_PRIVATE, sizeof(int) * 2, IPC_CREAT | 0600);
     if (shmid < 0) { perror("shmget error"); exit(1); }
 
+    //attaches it
     shared = (int*)shmat(shmid, NULL, 0);
     if (shared == (void*)-1) { perror("shmat error"); exit(1); }
 
+    // Make a 1-semaphore set (mutex), init to 1 → 
     semid = semget(IPC_PRIVATE, 1, IPC_CREAT | 0600);
     if (semid < 0) { perror("semget"); exit(1); }
     union semun arg; arg.val = 1;
@@ -40,10 +43,11 @@ int main(void) {
     setvbuf(stdout, NULL, _IONBF, 0);
 
     if (sem_wait_op(semid) == -1) perror("sem_wait_op");
-    shared[0] = 3;   
-    shared[1] = 0;  
+    shared[0] = 3;   //multiple
+    shared[1] = 0;  //counter
     if (sem_signal_op(semid) == -1) perror("sem_signal_op");
 
+    // Fork child and pass shmid & semid via exec
     childpid = fork();
     if (childpid < 0) {
         perror("fork failed");
@@ -60,6 +64,8 @@ int main(void) {
         perror("execl failed");
         _exit(127);
     }
+
+    // Parent loop: lock, read/print/update, unlock, until counter > 500
     while (1) {
         int v, m, done;
 
@@ -78,6 +84,7 @@ int main(void) {
         sleep(1);
     }
 
+    //cleanup, detach & remove SHM and semaphore
     int status;
     waitpid(childpid, &status, 0);
     if (shmdt(shared) == -1) perror("shmdt");

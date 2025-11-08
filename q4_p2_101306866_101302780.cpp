@@ -14,27 +14,27 @@ int main(int argc, char **argv) {
         return 1;
     }
 
-    int shmid = atoi(argv[1]);
-    int *shared = (int*)shmat(shmid, NULL, 0);
+    int shmid = atoi(argv[1]); //parse shmid from argv
+    int *shared = (int*)shmat(shmid, NULL, 0); //attach
     if (shared == (void*)-1) {
         perror("shmat error");
         return 1;
     }
 
-    setvbuf(stdout, NULL, _IONBF, 0); 
+    setvbuf(stdout, NULL, _IONBF, 0); //unbuffered outut
 
 
-    while (shared[1] <= 100) {
+    while (shared[1] <= 100) { //waits until the parent raises a counter above 100
         sleep(1);
     }
 
 
-    int last_seen = -1;
+    int last_seen = -1; //prints new values until counter is greater than 500
     while (shared[1] <= 500) {
         int cur = shared[1];
         int m   = shared[0];
 
-        if (cur != last_seen) {
+        if (cur != last_seen) { //only print when the values changes
             if (cur % m == 0)
                 printf("P2: saw counter=%d (multiple of %d)\n", cur, m);
             else
@@ -44,6 +44,6 @@ int main(int argc, char **argv) {
         sleep(1);
     }
 
-    shmdt(shared);
+    shmdt(shared); //detach
     return 0;
 }
